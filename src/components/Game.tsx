@@ -99,17 +99,23 @@ const Game: React.FC = () => {
 
             if (userId) {
                 try {
-                    // Use relative path for Vercel/Proxy compatibility
-                    await fetch('/api/notify', {
+                    // DEBUG: Alert to verify execution on device
+                    // alert(`Debugging: Sending promo to user ${userId}`);
+
+                    const response = await fetch('/api/notify', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ userId, type: 'WIN', promoCode: code })
                     });
+
+                    if (!response.ok) {
+                        alert(`Error sending promo: Server responded ${response.status}`);
+                    }
                 } catch (e) {
-                    console.error('Failed to notify bot', e);
+                    alert(`Network error sending promo: ${e}`);
                 }
             } else {
-                console.warn('Telegram User ID not found. Notification skipped. (Are you testing in browser?)');
+                alert('Debug: Telegram User ID not found. App might not be connected to Bot properly.');
             }
         } else if (status === 'LOST') {
             console.log('Telegram Bot: Проигрыш');
