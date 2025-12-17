@@ -3,6 +3,7 @@ import Board from './Board';
 import Modal from './Modal';
 import { checkWinner, getBestMove, generatePromoCode } from '../utils';
 import type { Player } from '../utils';
+import { playSound } from '../audio';
 
 // Add global type definition for Telegram WebApp
 declare global {
@@ -14,6 +15,9 @@ declare global {
                 close: () => void;
                 expand: () => void;
                 disableVerticalSwipes: () => void;
+                HapticFeedback?: {
+                    impactOccurred: (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft') => void;
+                };
                 initDataUnsafe: {
                     user?: {
                         id: number;
@@ -40,6 +44,13 @@ const Game: React.FC = () => {
     const [gameStatus, setGameStatus] = useState<'SETUP' | 'PLAYING' | 'WON' | 'LOST' | 'DRAW'>('SETUP');
     const [promoCode, setPromoCode] = useState<string | undefined>(undefined);
     const [modalOpen, setModalOpen] = useState<boolean>(false);
+
+    // Helper for haptics
+    const triggerHaptic = (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft') => {
+        if (window.Telegram?.WebApp?.HapticFeedback) {
+            window.Telegram.WebApp.HapticFeedback.impactOccurred(style);
+        }
+    };
 
     // Initialize Telegram WebApp
     useEffect(() => {
@@ -72,6 +83,8 @@ const Game: React.FC = () => {
     }, [isPlayerTurn, gameStatus, board, playerSymbol]);
 
     const startGame = (selectedSide: 'X' | 'O') => {
+        playSound('click');
+        triggerHaptic('medium');
         setPlayerSymbol(selectedSide);
         // X always goes first. If player picks X, player turn. If O, bot (X) turn.
         setIsPlayerTurn(selectedSide === 'X');
@@ -80,6 +93,9 @@ const Game: React.FC = () => {
 
     const handleMove = (index: number, player: Player) => {
         if (board[index] || gameStatus !== 'PLAYING') return;
+
+        playSound('pop');
+        triggerHaptic('light');
 
         const newBoard = [...board];
         newBoard[index] = player;
@@ -104,31 +120,29 @@ const Game: React.FC = () => {
         const userId = tg?.initDataUnsafe?.user?.id;
 
         if (status === 'WON') {
+            playSound('win');
+            triggerHaptic('heavy');
             const code = generatePromoCode();
             setPromoCode(code);
             console.log(`Telegram Bot: Победа! Промокод выдан: ${code}`);
 
             if (userId) {
                 try {
-                    // DEBUG: Alert to verify execution on device
-                    // alert(`Debugging: Sending promo to user ${userId}`);
-
-                    const response = await fetch('/api/notify', {
+                    // Using relative path for Vercel/Proxy compatibility
+                    await fetch('/api/notify', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ userId, type: 'WIN', promoCode: code })
                     });
-
-                    if (!response.ok) {
-                        alert(`Error sending promo: Server responded ${response.status}`);
-                    }
                 } catch (e) {
-                    alert(`Network error sending promo: ${e}`);
+                    console.error('Failed to notify bot', e);
                 }
             } else {
-                alert('Debug: Telegram User ID not found. App might not be connected to Bot properly.');
+                console.warn('Telegram User ID not found.');
             }
         } else if (status === 'LOST') {
+            playSound('lose');
+            triggerHaptic('heavy');
             console.log('Telegram Bot: Проигрыш');
             if (userId) {
                 try {
@@ -143,12 +157,16 @@ const Game: React.FC = () => {
             } else {
                 console.warn('Telegram User ID not found. Notification skipped.');
             }
+        } else {
+            triggerHaptic('medium');
         }
 
         setModalOpen(true);
     };
 
     const resetGame = () => {
+        playSound('click');
+        triggerHaptic('medium');
         setBoard(Array(9).fill(null));
         setGameStatus('SETUP');
         setPlayerSymbol(null);
