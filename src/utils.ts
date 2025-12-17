@@ -44,6 +44,10 @@ export function getBestMove(board: Player[], computerPlayer: Player): number {
 
     const opponent = computerPlayer === 'X' ? 'O' : 'X';
 
+    // Difficulty Adjustment: 30% chance to make a random mistake
+    // This makes the bot beatable for the target audience
+    const isMistake = Math.random() < 0.3;
+
     // Helper to check if a move leads to immediate win for a player
     const findWinningMove = (player: Player): number => {
         for (let i = 0; i < board.length; i++) {
@@ -58,19 +62,22 @@ export function getBestMove(board: Player[], computerPlayer: Player): number {
         return -1;
     };
 
-    // 1. Try to win
-    const winningMove = findWinningMove(computerPlayer);
-    if (winningMove !== -1) return winningMove;
-
-    // 2. Block opponent
-    const blockingMove = findWinningMove(opponent);
-    if (blockingMove !== -1) return blockingMove;
-
-    // 3. Take center
-    if (!board[4]) return 4;
-
-    // 4. Random available
     const availableMoves = board.map((cell, index) => cell === null ? index : -1).filter(idx => idx !== -1);
+
+    if (!isMistake) {
+        // 1. Try to win
+        const winningMove = findWinningMove(computerPlayer);
+        if (winningMove !== -1) return winningMove;
+
+        // 2. Block opponent
+        const blockingMove = findWinningMove(opponent);
+        if (blockingMove !== -1) return blockingMove;
+
+        // 3. Take center (if available)
+        if (!board[4]) return 4;
+    }
+
+    // 4. Random available (fallback or mistake)
     if (availableMoves.length > 0) {
         return availableMoves[Math.floor(Math.random() * availableMoves.length)];
     }

@@ -108,6 +108,8 @@ const Game: React.FC = () => {
                 } catch (e) {
                     console.error('Failed to notify bot', e);
                 }
+            } else {
+                console.warn('Telegram User ID not found. Notification skipped. (Are you testing in browser?)');
             }
         } else if (status === 'LOST') {
             console.log('Telegram Bot: Проигрыш');
@@ -121,6 +123,8 @@ const Game: React.FC = () => {
                 } catch (e) {
                     console.error('Failed to notify bot', e);
                 }
+            } else {
+                console.warn('Telegram User ID not found. Notification skipped.');
             }
         }
 

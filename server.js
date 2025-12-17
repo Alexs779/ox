@@ -37,6 +37,7 @@ bot.onText(/\/start/, (msg) => {
 // API endpoint for the frontend
 app.post('/api/notify', async (req, res) => {
     const { userId, type, promoCode } = req.body;
+    console.log(`Received notification request: ${type} for user ${userId}`);
 
     if (!userId) {
         return res.status(400).json({ error: 'Missing userId' });
