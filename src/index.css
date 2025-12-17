@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+  --color-rose-gold: #B76E79;
+  --color-soft-pink: #FFC5D3;
+  --color-cream: #F5F5DC;
+  --color-dark-pink: #8B4852;
+  --color-white-transparent: rgba(255, 255, 255, 0.6);
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  background: radial-gradient(circle at top, var(--color-soft-pink), var(--color-cream), #ffe4e6);
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 20px;
+}
+
+/* Animations */
+@keyframes bounce-short {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-slow {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(0.95);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Typography */
+h1.game-title {
+  font-family: var(--font-serif);
+  font-size: 3rem;
+  font-weight: 700;
+  background: linear-gradient(to right, var(--color-rose-gold), var(--color-dark-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 2rem;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Board */
+.board-container {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(5px);
+  padding: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 350px;
+  width: 100%;
+}
+
+.board-cell {
+  height: 90px;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  background: var(--color-white-transparent);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.board-cell:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.board-cell:disabled {
+  cursor: default;
+}
+
+.icon-x {
+  width: 48px;
+  height: 48px;
+  color: var(--color-rose-gold);
+  stroke-width: 2.5;
+  animation: bounce-short 0.5s ease-in-out;
+}
+
+.icon-o {
+  width: 48px;
+  height: 48px;
+  color: var(--color-dark-pink);
+  stroke-width: 2.5;
+  animation: pulse-slow 2s infinite;
+}
+
+/* Status Text */
+.status-text {
+  margin-top: 1.5rem;
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 20px;
+  text-align: center;
+  max-width: 90%;
+  width: 350px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border: 4px solid var(--color-rose-gold);
+  animation: fade-in-up 0.4s ease-out;
+}
+
+.modal-title {
+  font-family: var(--font-serif);
+  color: var(--color-rose-gold);
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.modal-message {
+  color: #555;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.promo-container {
+  background: rgba(255, 197, 211, 0.3);
+  /* soft-pink alpha */
+  border: 1px dashed var(--color-soft-pink);
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.promo-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  margin-bottom: 0.5rem;
+}
+
+.promo-code {
+  font-family: monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-dark-pink);
+  letter-spacing: 2px;
+}
+
+.btn-primary {
+  background: var(--color-rose-gold);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(183, 110, 121, 0.4);
+}
+
+.btn-primary:hover {
+  background: var(--color-dark-pink);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(183, 110, 121, 0.6);
+}
