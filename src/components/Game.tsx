@@ -41,8 +41,31 @@ const Game: React.FC = () => {
 
     // Initialize Telegram WebApp
     useEffect(() => {
-        window.Telegram?.WebApp.ready();
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand(); // Expand to full height
+            tg.disableVerticalSwipes(); // Disable vertical swipes if supported (new API)
+        }
     }, []);
+
+    // ... (rest of bot logic) ...
+
+    // (Inside endGame function)
+    if (userId) {
+        try {
+            // Using relative path for Vercel/Proxy compatibility
+            await fetch('/api/notify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, type: 'WIN', promoCode: code })
+            });
+        } catch (e) {
+            console.error('Failed to notify bot', e);
+        }
+    } else {
+        console.warn('Telegram User ID not found.');
+    }
 
     // Bot Logic
     useEffect(() => {

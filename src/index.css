@@ -16,12 +16,25 @@ body {
   font-family: var(--font-sans);
   background: radial-gradient(circle at top, var(--color-soft-pink), var(--color-cream), #ffe4e6);
   color: #333;
+  /* Use small uppercase vh (dvh) for better mobile support if supported, fallback to 100vh */
   min-height: 100vh;
+  height: 100dvh;
+  /* Dynamic viewport height for mobile browsers */
+  width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  /* Prevent scrolling */
+  user-select: none;
+  /* Disable text selection */
+  -webkit-user-select: none;
+  /* Safari */
+  -webkit-touch-callout: none;
+  /* Disable callout context menu on iOS */
+  touch-action: manipulation;
+  /* Disable double-tap zoom */
 }
 
 .app-container {
@@ -208,6 +221,9 @@ h1.game-title {
   font-weight: 700;
   color: var(--color-dark-pink);
   letter-spacing: 2px;
+  user-select: text;
+  /* Allow selection specifically for the code */
+  -webkit-user-select: text;
 }
 
 .btn-primary {
